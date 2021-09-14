@@ -1,7 +1,8 @@
-* xref:01-setup.adoc[1. Setup]
-** xref:01-setup.adoc#prerequisite[Prerequisites]
-** xref:01-setup.adoc#minikube[Setup Minikube]
+* Requirements
+** xref:setup.adoc[Setup]
 
-* xref:02-deploy.adoc[2. Deploy Service]
-** xref:02-deploy.adoc#package[Build Service]
-** xref:02-deploy.adoc#deploy[Deploy Dervice]
+* Beginner
+** xref:basics.adoc[Basics and Fundamentals]
+** xref:create.adoc[Setup your first charts]
+** xref:chart-per-service.adoc[Chart per service]
+** xref:leader-chart.adoc[Leader Chart approach]

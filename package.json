@@ -1,11 +1,11 @@
 {
-  "name": "rhs-openshift-admins-devops",
-  "description": "OpenShift Admins Devops Course Documentation Site",
-  "homepage": "https://redhat-scholars.github.io/openshift-admins-devops",
+  "name": "helm-tutorial-site",
+  "description": "Helm Tutorial Documentation",
+  "homepage": "https://redhat-developer-demos.github.io/helm-tutorial",
   "author": {
-    "email": "kamesh.sampath@hotmail.com",
-    "name": "Kamesh Sampath",
-    "url": "https://twitter.com/@kamesh_sampath"
+    "email": "amihalce@redhat.com",
+    "name": "Ana-Maria Mihalceanu",
+    "url": "https://twitter.com/@ammbra1508"
   },
   "dependencies": {
     "@antora/cli": "^2.3.1",
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/redhat-scholars/openshift-admins-devops.git"
+    "url": "git+https://github.com/redhat-scholars/helm-tutorial.git"
   },
   "license": "Apache-2.0",
   "babel": {

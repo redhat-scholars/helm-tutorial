@@ -1,0 +1,6 @@
+:helm-version: 3.6.3
+:virtualbox-version: 6.1
+:kubernetes-version: v1.22.0
+:minikube-version: v1.22.0
+:maven-version: 3.6.3
+:java-version: 11

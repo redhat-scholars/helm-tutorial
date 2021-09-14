@@ -1,0 +1,44 @@
+include::versions.adoc[]
+
+The following CLI tools are required for running the exercises in this tutorial. 
+Please have them installed and configured before you get started with any of the tutorial chapters.
+
+[cols="4*^,4*.",options="header,+attributes"]
+|===
+|**Tool**|**macOS**|**Fedora**|**windows**
+
+| `Git`
+| https://git-scm.com/download/mac[Download]
+| https://git-scm.com/download/linux[Download]
+| https://git-scm.com/download/win[Download]
+
+| `Docker`
+| https://docs.docker.com/docker-for-mac/install[Docker for Mac]
+| `dnf install docker`
+| https://docs.docker.com/docker-for-windows/install[Docker for Windows]
+
+| `VirtualBox`
+| https://download.virtualbox.org/virtualbox/6.1.6/VirtualBox-6.1.6-137129-OSX.dmg[Download]
+| https://www.virtualbox.org/wiki/Linux_Downloads[Download]
+| https://download.virtualbox.org/virtualbox/6.1.6/VirtualBox-6.1.6-137129-Win.exe[Download]
+
+| https://kubernetes.io/docs/tasks/tools/install-minikube[Minikube] {minikube-version}
+| https://github.com/kubernetes/minikube/releases/download/{minikube-version}/minikube-darwin-amd64[Download]
+| https://github.com/kubernetes/minikube/releases/download/{minikube-version}/minikube-linux-amd64[Download]
+| https://github.com/kubernetes/minikube/releases/download/{minikube-version}/minikube-windows-amd64.exe[Download]
+
+| `kubectl {kubernetes-version}`
+| https://storage.googleapis.com/kubernetes-release/release/{kubernetes-version}/bin/darwin/amd64/kubectl[Download]
+| https://storage.googleapis.com/kubernetes-release/release/{kubernetes-version}/bin/linux/amd64/kubectl[Download]
+| https://storage.googleapis.com/kubernetes-release/release/{kubernetes-version}/bin/windows/amd64/kubectl.exe[Download]
+
+| https://github.com/helm/helm/releases[helm]
+| `brew install helm`
+| `sudo snap install helm --classic`
+| https://get.helm.sh/helm-v3.6.3-windows-amd64.zip[Download] or `choco install kubernetes-helm`
+
+
+| `Apache Maven {maven-version}`
+| https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz[Download]
+| https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip[Download]
+| https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz[Download]

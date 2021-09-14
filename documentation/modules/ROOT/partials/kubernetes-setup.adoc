@@ -1,0 +1,94 @@
+The profile {profile} is created to run the tutorial:
+
+[tabs]	
+====	
+Minikube::	
++	
+--	
+Having `minikube` installed and in your `PATH`, then run:
+
+**MacOS**
+[.console-input]
+[source,bash,subs="attributes+,+macros"]	
+----	
+minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=virtualbox -p {profile}	
+----
+
+**Linux**
+[.console-input]
+[source,bash,subs="attributes+,+macros"]	
+----	
+minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=kvm2 -p {profile}	
+----	
+
+**Windows:**
+[.console-input]
+[source,bash,subs="attributes+,+macros"]	
+----	
+minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=hyperv -p {profile}	
+----	
+
+And the output must be something similar like:	
+
+[.console-output]
+[source,bash,subs="attributes+,+macros"]	
+----	
+😄  [{profile}] minikube v1.22.0 on Darwin 11.3	
+✅  Created a new profile : {profile}	
+✅  minikube profile was successfully set to {profile}	
+😄  [default] minikube {minikube-version} on Darwin 11.3
+✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])	
+🔥  Creating virtualbox VM (CPUs=2, Memory=8192MB, Disk=50000MB) ...	
+🐳  Preparing Kubernetes {kubernetes-version} on Docker '20.10.6' ...	
+    ▪ apiserver.enable-admission-plugins=LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook	
+🚜  Pulling images ...	
+🚀  Launching Kubernetes ...	
+⌛  Waiting for cluster to come online ...	
+🏄  Done! kubectl is now configured to use "{profile}"	
+----	
+
+Finally configure to use minikube internal docker as docker host:	
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]	
+----	
+eval $(minikube docker-env -p {profile})	
+----
+
+--	
+OpenShift::	
++	
+--	
+To run OpenShift4, you need to have one provisioned using https://try.openshift.com[try.openshift.com] or can use any existing OpenShift4 cluster.	
+Once you have your cluster, you can download the latest OpenShift client(oc) from https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/[here] and add to your path.	
+
+----	
+oc version 	
+----	
+
+You can check the OpenShift version using:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]	
+----	
+oc version	
+----	
+
+The output should show oc version >=4.7:	
+
+[.console-output]
+[source,bash,subs="attributes+,+macros"]	
+----	
+Client Version: 4.7.0-202102130115.p0-c66c03f	
+Kubernetes Version: {kubernetes-version}	
+----	
+
+Then login into the cluster and run:	
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]	
+----	
+oc new-project {profile}	
+----	
+--	
+====

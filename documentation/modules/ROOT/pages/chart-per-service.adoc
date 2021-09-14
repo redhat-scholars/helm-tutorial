@@ -1,0 +1,124 @@
+= Chart per service
+
+Use a Helm chart per microservice approach if you seek to achieve flexible, simple versioning and low complexity charts to package your application.
+Be careful, this technique might bring:
+
+• huge amount of duplication
+• difficulty to keep consistent many templates
+• hardship to introduce global changes
+
+**Goal of this section: deploy the tutorial microservice using Helm charts in a different namespace.
+**
+
+== Inject data from a configmap template
+
+Navigate to `templates` folder and create `configmap.yaml`.
+Open `configmap.yaml` and replace it with the following:
+
+[.console-input]
+[source, yaml, subs="attributes+,+macros"]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Values.configmap.region | quote }}
+  labels:
+    {{- include "faq.labels" . | nindent 4 }}
+data:
+  region: {{.Values.configmap.region | quote }}
+----
+
+Now add the default value for a region in `values.yaml`:
+
+[.console-input]
+[source, yaml, subs="attributes+,+macros"]
+----
+configmap:
+  key: region
+  region: CEE
+----
+
+And configure the `deployment.yaml` template to use the new configmap:
+
+[.console-input]
+[source, yaml, subs="attributes+,+macros"]
+----
+env:
+  - name: POSTGRES_SERVER
+    value: { { .Values.postgresql.server | default (printf "%s-postgresql" ( .Release.Name )) | quote } }
+  - name: POSTGRES_USERNAME
+    value: { { default "postgres" .Values.postgresql.postgresUser | quote } }
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: { { .Values.postgresql.secretName | default (printf "%s-postgresql" ( .Release.Name )) | quote } }
+        key: { { .Values.postgresql.secretKey } }
+  - name: REGION
+    valueFrom:
+        secretKeyRef:
+          name: {{ .Values.configmap.region }}
+          key: {{ .Values.configmap.key }}
+----
+
+== Automatically Roll Deployments when a ConfigMap/Secret changes
+
+Very often, ConfigMaps or Secrets are injected as configuration files in containers and their content gets updated as well.
+But if the deployment spec itself didn't change the application keeps running with the old configuration resulting in an inconsistent deployment.
+
+The `sha256sum` function can be used to ensure a deployment's annotation section is updated if another file changes:
+
+
+[.console-input]
+[source, yaml, subs="attributes+,+macros"]
+----
+kind: Deployment
+spec:
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+----
+
+== Upgrade the release 
+
+Update existing release with the newly added configurations:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+helm upgrade simple ./chart/faq
+---- 
+
+== Replicate the installation in a different namespace
+
+Let's create a different namespace:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+kubectl create ns qa
+
+#permanently save the namespace for all subsequent kubectl commands
+kubectl config set-context --current --namespace=qa
+----
+
+And define a set of values for this namespace by copy pasting  `values.yaml` into `values.qa.yaml`.
+Modify the region inside `value.qa.yaml`:
+
+[.console-input]
+[source,yaml,subs="attributes+,+macros"]
+----
+configmap:
+  key: region
+  region: BENELUX
+----
+
+And now install the charts:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+helm install simple --values ./chart/values.qa.yaml
+----
+
+*Congratulations*, you can now see the frequently asked questions based on region!

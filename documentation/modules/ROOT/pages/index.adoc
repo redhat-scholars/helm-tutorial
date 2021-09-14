@@ -1,20 +1,24 @@
-= Welcome to Template Tutorial
+= Welcome to Helm Tutorial
 :page-layout: home
 :!sectids:
 
 [.text-center.strong]
-== Publish Services to Kubernetes
+== The package manager for Kubernetes
+Helm is the best way to find, share, and use software built for Kubernetes.
 
-A Kubernetes tutorial to show how you can deploy a Java service to a Kubernetes cluster as it was a child game.
+[.mt-4.left]
+image::helm-icon-color.png[Helm,150,150,align="center"]
+
+Throughout this tutorial you will improve your knowledge on deploying Java based applications using different Helm charts techniques.
+
+
+At the end of this tutorial you should be able to understand and use Helm to easily work with your applications. 
+
+Happy helming!
+
+
 
 [.tiles.browse]
 == Browse modules
 
-[.tile]
-.xref:01-setup.adoc[Get Started]
-* xref:01-setup.adoc#minikube[Minikube]
-
-[.tile]
-.xref:02-deploy.adoc[Deploying]
-* xref:02-deploy.adoc#package[Package the Application]
-* xref:02-deploy.adoc#deploy[Deploy the Application]
+include::../nav.adoc[]

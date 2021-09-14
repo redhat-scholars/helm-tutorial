@@ -1,0 +1,213 @@
+= Setup your first charts
+
+If you seek to achieve flexible and simple versioning when deploying to Kubernetes, you can create Helm charts for your microservice(s).
+
+IMPORTANT: Remember that your charts should contain templates useful for the deployment of your application, so please try to avoid declaring multiple Kubernetes resources in one template.
+
+**Goal of this section is to deploy  https://github.com/redhat-developer-demos/rhd-tutorial-helm.git[the tutorial application] using Helm Charts.**
+
+== Create the chart
+
+Firstly, let's clone the repository:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+git clone  https://github.com/redhat-developer-demos/rhd-tutorial-helm.git
+----
+
+Make sure that you are under root folder of the cloned repository (`rhd-tutorial-helm`) and run:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+cd chart
+helm create faq
+----
+
+The above command generates the following structure for your chart:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+├── Chart.yaml <1>
+├── charts <2>
+├── templates <3> 
+│   ├── NOTES.txt <6>
+│   ├── _helpers.tpl <7> 
+│   ├── deployment.yaml
+│   ├── hpa.yaml
+│   ├── ingress.yaml
+│   ├── service.yaml
+│   ├── serviceaccount.yaml
+│   └── tests <5>
+│       └── test-connection.yaml 
+└── values.yaml <4>
+----
+ 
+<1> The `Chart` file contains a contains a description of the chart.
+<2> The `charts` directory can contain other charts.
+<3> The `templates/` directory contains all template files used for installing a chart.
+<4> The `values.yaml` file contains the default values for a chart.
+<5> The `tests` directory can contain tests to be run at different installation stages of the charts.
+<6> The `NOTES.txt` can contain chart installation instructions that will be displayed to the users when running `helm install`.
+<7> `_helpers.tpl` is where you can put template helpers that you can re-use throughout the chart.
+
+== Customizing `values.yaml`
+
+Your `values.yaml` is the place where you can specify values for different parameters used across templates.
+
+Modify the name of the values file with the image values with:
+
+[.console-input]
+[source, yaml,subs="attributes+,+macros"]
+----
+image:
+  repository: ammbra/faq
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+----
+
+Using the details from previous section when you installed the database, you can parameterize the connection to the database:
+
+[.console-input]
+[source, yaml, subs="normal,attributes"]
+----
+postgresql:
+  server: faq-db-postgresql
+  postgresqlUsername: faq-default
+  secretName: faq-db-postgresql
+  secretKey:  postgresql-password
+----
+
+Every well-designed application needs health checks and this why you should add the following:
+
+[.console-input]
+[source, yaml,subs="attributes+,+macros"]
+----
+readinessProbe:
+  path: /q/health/ready
+  initialDelaySeconds: 5
+  timeoutSeconds: 3
+  periodSeconds: 3
+  failureThreshold: 3
+
+
+livenessProbe:
+  path: /q/health/live
+  initialDelaySeconds: 10
+  timeoutSeconds: 2
+  periodSeconds: 8
+  failureThreshold: 3
+----
+
+Your deployed application should be accessible from inside and outside the Kubernetes cluster.
+A Kubernetes Service of type `LoadBalancer` will be used for this installation.
+
+Please change the service values that will expose your microservice:
+
+[.console-input]
+[source, yaml,subs="attributes+,+macros"]
+----
+service:
+  ports:
+    port: 8080
+  type: LoadBalancer
+----
+
+== Modify the template associated with Deployment
+
+Navigate to `templates/deployment.yaml`.
+The keys associated to the values defined in `values.yaml` need to be employed in corresponding templates by using template directives.
+
+NOTE: A template directive is enclosed in `{{ and }}` blocks.
+
+
+Modify the Docker image section by adding a parametrizable container port:
+
+[.console-input]
+[source, yaml,subs="attributes+,+macros"]
+----
+image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+imagePullPolicy: {{ .Values.image.pullPolicy }}
+ports:
+  - name: http 
+    containerPort: {{ .Values.image.containerPort }}
+----
+
+Since the microservice is also using a PostgreSQL database, let's add its details:
+
+[.console-input]
+[source, yaml,subs="attributes+,+macros"]
+----
+env:
+  - name: POSTGRES_SERVER
+    value: {{ .Values.postgresql.server | default (printf "%s-postgresql" ( .Release.Name )) | quote }} <1>
+  - name: POSTGRES_USERNAME
+    value: {{ default "postgres" .Values.postgresql.postgresUsername | quote }} <2>
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ .Values.postgresql.secretName | default (printf "%s-postgresql" ( .Release.Name )) | quote }}
+        key: {{ .Values.postgresql.secretKey }} <3>
+----
+
+<1> If the value for the PostgreSQL server is defined in `values.yaml`, that one will be filled in.
+ Else, a string composed from name of the release and ending with `postgresql` will be filled in.
+
+<2> If no value was specified for the username in `values.yaml`, the `posgres` user will be used.
+
+<3> Please note that the database password is not directly obtained from `values.yaml`, but referenced from the secret that contains the actual password.
+
+Last but not least, the health endpoints need to adapted in order to use the keys defined in `values.yaml`.
+Change the health and readiness using the following:
+
+[.console-input]
+[source, yaml, subs="normal,attributes"]
+----
+readinessProbe:
+  httpGet:
+    path: {{ .Values.readinessProbe.path}}
+    port: {{ .Values.service.ports.port }}
+  initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds}}
+  timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds}}
+  periodSeconds: {{ .Values.readinessProbe.periodSeconds}}
+  failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+livenessProbe:
+  httpGet:
+    path: {{ .Values.livenessProbe.path}}
+    port: {{ .Values.service.ports.port }}
+  initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds}}
+  timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds}}
+  periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+  failureThreshold: {{ .Values.livenessProbe.failureThreshold}}
+----
+
+== Deploy the modified charts
+
+Now simply install your charts using:
+
+[.console-input]
+[source, bash, subs="attributes+,+macros"]
+----
+helm install simple ./chart/faq 
+----
+
+Check the status of your installation and get the details by running:
+
+[.console-input]
+[source, bash, subs="attributes+,+macros"]
+----
+helm status simple <1> 
+helm get all simple <2> 
+kubectl get svc/simple-faq <3>
+----
+
+<1> Check if your installation was successful or not.
+<2> Get information about resources deployed.
+<3> Get the URL to access your application.
+
+Go in a browser window and copy-paste http://localhost:8080/questions
+
+*Congratulations*, you can now see the frequently asked questions!
+

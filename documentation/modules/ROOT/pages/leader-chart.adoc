@@ -1,0 +1,168 @@
+= Leader chart
+
+Assuming that you already went through the chart per service approach, you should use leader chart approach with Helm charts for many microservices when you want:
+
+• to avoid unnecessary duplication
+• to have consistency accross changes
+• to introduce global changes in an easy manner.
+
+You should be aware that this approach depends on the amount of charts for each lead chart and can introduce:
+
+• high complexity of templates
+• tight coupling
+• less flexible local changes.
+
+**Goal of this section: deploy the microservice together with its database using Helm charts.
+**
+
+== Leader Helm chart setup
+
+Make sure that you are under root folder of the clone repository (_landmark_) and run:
+
+[.console-input]
+[source, bash, subs="attributes+,+macros"]
+----
+helm create leader
+----
+
+You should now have the following structure:
+
+[.console-input]
+[source, bash, subs="attributes+,+macros"]
+----
+leader
+├── Chart.yaml
+├── charts
+├── templates
+│   ├── NOTES.txt
+│   ├── _helpers.tpl
+│   ├── deployment.yaml
+│   ├── hpa.yaml
+│   ├── ingress.yaml
+│   ├── service.yaml
+│   ├── serviceaccount.yaml
+│   └── tests
+│       └── test-connection.yaml
+└── values.yaml
+----
+
+Remove the `templates` folder under leader because in this approach we will not use it.
+
+=== Modify `values.yaml` file
+
+Go to the newly created charts and find the `values.yaml` file.
+You can use `vim` or your favorite IDE to edit its values.
+
+Delete everything from your `values.yaml` and just add the following:
+
+[.console-input]
+[source, yaml, subs="attributes+,+macros"]
+----
+# Enabling postgres service, by default
+postgresql:
+  # Comment line below if db is deployed inside Kube
+  postgresqlDatabase: faq
+  postgresqlUsername: postgres
+  postgresqlPassword: postgres
+  secretName: leader-postgresql
+  server: leader-postgresql
+  persistence:
+    enabled: false
+----
+
+Save your work.
+
+=== Modify `Chart.yaml`
+
+Because we will deploy both charts (faq and database), the `Chart.yaml` file
+needs to be modified and specify the database dependency there.
+
+Go to `Chart.yaml` and add a new section regarding dependencies.
+
+[.console-input]
+[source, yaml, subs="attributes+,+macros"]
+----
+# These are the dependencies needed by the leader chart.
+# Each time you need a new dependency, add it in this area
+dependencies:
+  - name: postgresql
+    version: 10.4.5
+    repository: "https://charts.bitnami.com/bitnami"
+----
+
+Save your work and run in the terminal the following command in order to update dependencies:
+
+[.console-input]
+[source,  bash, subs="attributes+,+macros"]
+----
+cd leader
+helm dependency update
+----
+
+=== Assembling subcharts in `charts` folder
+
+If you went through chart per service setup you will reuse the chart created there.
+
+Copy the content of faq chart from to your `leader/charts_` folder.
+The resulted leader folder should look like this:
+
+[.console-input]
+[source, bash, subs="attributes+,+macros"]
+----
+leader
+├── Chart.yaml
+├── charts
+│   └── faq
+│       ├── Chart.yaml
+│       ├── charts
+│       ├── templates
+│       │   ├── NOTES.txt
+│       │   ├── _helpers.tpl
+│       │   ├── configmap.yaml
+│       │   ├── deployment.yaml
+│       │   ├── hpa.yaml
+│       │   ├── ingress.yaml
+│       │   ├── service.yaml
+│       │   ├── serviceaccount.yaml
+│       │   └── tests
+│       │       └── test-connection.yaml
+│       └── values.yaml
+└── values.yaml
+----
+
+Go to `leader/charts/faq/values.yaml` and comment the details regarding PostgreSQL:
+
+[.console-input]
+[source, yaml, subs="attributes+,+macros"]
+----
+postgresql:
+#  server: faq-db-postgresql
+#  postgresqlUsername: faq-default
+#  secretName: faq-db-postgresql
+  secretKey: postgresql-password
+----
+
+=== Deploy the leader charts
+Install your charts by using:
+
+[.console-input]
+[source, bash, subs="attributes+,+macros"]
+----
+$ helm install leader ./leader
+$ helm status leader
+----
+
+You can validate the installation via:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+helm list 
+helm get all leader
+----
+
+If you worked locally, please go in a browser window and copy-paste http://localhost:8080/questions
+
+*Congratulations*, you have installed the application with just one command!
+
+

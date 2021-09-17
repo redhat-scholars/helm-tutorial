@@ -2,30 +2,32 @@ runtime:
   cache_dir: ./.cache/antora
 
 site:
-  title: Helm Tutorial(Dev Mode)
-  url: http://localhost:3000/helm-tutorial/index.html
+  title: Helm Tutorial
+  url: https://redhat-developer-demos.github.io/helm-tutorial
   start_page: helm-tutorial::index.adoc
 
 content:
   sources:
-    - url: .
-      branches: HEAD
+    - url: ./
       start_path: documentation
+
 asciidoc:
   attributes:
-    title: Helm Tutorial(Dev Mode)
+    tutorial-namespace: helm-tutorial
+    project-name: faq-app
     page-pagination: true
     page-hide-versions-component: true
   extensions:
-    - ./lib/remote-include-processor.js
     - ./lib/tab-block.js
+    - ./lib/remote-include-processor.js
 ui:
   bundle:
     url: https://github.com/redhat-developer-demos/rhd-tutorial-ui/releases/download/v0.1.9/ui-bundle.zip
-  supplemental_files:
+  supplemental_files: 
     - path: ./supplemental-ui
     - path: .nojekyll
     - path: ui.yml
       contents: "static_files: [ .nojekyll ]"
+ 
 output:
   dir: ./gh-pages

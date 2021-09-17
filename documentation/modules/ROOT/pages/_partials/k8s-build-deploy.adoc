@@ -1,0 +1,179 @@
+[:quarkus-project-name='']
+
+#tag::k8s-prep[]
+
+[IMPORTANT]
+====
+If you have not deployed the application previously, you need to add Quarkus Kubernetes extension. This extension uses https://github.com/dekorateio/dekorate[Dekorate] to generate a default Kubernetes resource template.
+
+[#qext-mvn-add-kubernetes-extension]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+./mvnw quarkus:add-extension -Dextensions="quarkus-kubernetes"
+----
+
+You need to configure group and name of the Docker container used to deploy into Kubernetes.
+
+Add the following properties (if you haven't already done it before) to pass:[$PROJECT_HOME]/src/main/resources/application.properties:
+
+[#quarkusk8s-update-props]
+[.console-input]
+[source,config,subs="+macros,+attributes"]
+----
+kubernetes.group=example
+quarkus.application.name={quarkus-project-name}
+----
+
+====
+
+Now you need to run Maven goal to generate Kubernetes resource.
+
+[#quarkusk8s-generate-kubernetes]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+./mvnw package -DskipTests
+----
+
+You can inspect the generated file by accessing next file:
+
+[#quakrusk8s-generated-kubernetes-resource]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+cat target/kubernetes/kubernetes.yml
+----
+
+#end::k8s-prep[]
+
+#tag::k8s-deploy[]
+
+ifndef::workshop[]
+[tabs]
+====
+kubectl::
++
+--
+[#{doc-sec}-run-deploy-k8s-app]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl apply -f pass:[$TUTORIAL_HOME]/target/kubernetes/kubernetes.yml
+----
+--
+oc::
++
+--
+endif::[]
+
+[#{doc-sec}-oc-run-deploy-k8s-app]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+oc apply -f pass:[$TUTORIAL_HOME]/target/kubernetes/kubernetes.yml
+----
+ifndef::workshop[]
+--
+====
+endif::[]
+
+#end::k8s-deploy[]
+
+
+#tag::k8s-invoke-svc[]
+
+ifndef::workshop[]
+[tabs]
+====
+kubectl::
++
+--
+
+You need to create a `NodePort` to expose the application if you are in minikube.
+As generated resources creates a `ClusterIP` service, you need to patch it:
+
+[#{doc-sec}-k8s-run-expose-svc-nodeport]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl patch svc {quarkus-project-name} --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
+----
+
+[#{doc-sec}-run-deploy-k8s-service]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+SVC_URL=$(minikube service -n quarkustutorial {quarkus-project-name} --url)
+----
+
+--
+oc::
++
+--
+endif::[]
+With OpenShift we can create a route to make Quarkus application publicly accessible:
+
+[#{doc-sec}-oc-run-expose-svc-route]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+oc expose service {quarkus-project-name}
+----
+
+Once the service is exposed we can use the following command to get the public url:
+
+[#{doc-sec}-oc-run-get-route]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+SVC_URL=$(oc get routes {quarkus-project-name} -o jsonpath='{.spec.host}')
+----
+ifndef::workshop[]
+--
+====
+endif::[]
+
+Now you can use the `SVC_URL` to call the service from the browser or via cli like:
+
+[#{doc-sec}-call-k8s-svc]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+curl $SVC_URL/{svc-path}
+----
+
+#end::k8s-invoke-svc[]
+
+#tag::k8s-delete[]
+
+ifndef::workshop[]
+[tabs]
+====
+kubectl::
++
+--
+[#{section-k8s}k8s-delete-k8s-app]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl delete all --all
+----
+--
+oc::
++
+--
+endif::[]
+
+[#{section-k8s}k8s-delete-oc-app]
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+oc delete all --all
+----
+ifndef::workshop[]
+--
+====
+endif::[]
+
+#end::k8s-delete[]

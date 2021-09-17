@@ -1,0 +1,64 @@
+[[Requirements]]
+= Basics and Fundamentals
+include::_attributes.adoc[]
+
+[#prerequisite]
+== Prerequisite CLI tools
+
+include::partial$prerequisites-helm.adoc[]
+
+|===
+
+[#helm]
+== Setup Helm
+
+You can setup Helm via OS specific https://helm.sh/docs/intro/install/#through-package-managers[package managers] or from the https://helm.sh/docs/intro/install/#from-the-binary-releases[binary releases].
+
+[tabs]
+====
+Linux::
++
+--
+If you prefer to install from binary releases, please download the Helm version that works with your OS and unpack it. Find the helm binary in the unpacked directory, and move it to its desired destination.
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+mv linux-amd64/helm /usr/local/bin/helm
+----
+--
+
+MacOS::
++
+--
+If you prefer to install from binary releases, please download the Helm version that works with your OS and unpack it. Find the helm binary in the unpacked directory, and move it to its desired destination.
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+mv linux-amd64/helm /usr/local/bin/helm
+----
+--
+
+Windows::
++
+--	
+Simply create a `bin` folder under the `home` folder, add that folder to the `User variable` Path via `Environment Variables for your account` in `Windows Settings`. 
+
+That way any executable copied to this bin folder will automatically be on the path.
+--
+====
+
+You can validate your installation by running:
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+helm version
+----
+
+[#minikube]
+== Setup Kubernetes
+
+:profile: my_profile
+
+include::partial$kubernetes-setup.adoc[]

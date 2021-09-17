@@ -1,0 +1,77 @@
+= Basics and Fundamentals
+
+:project-name: faq-app
+
+Helm is a packager for Kubernetes that bundles related manifest files and packages them into a single logical deployment unit: `Chart`. Simplified, for many engineers Helm makes it easy to start using Kubernetes with real applications. 
+
+Helm Charts are useful for addressing the installation complexities and simple upgrades of particularly stateless applications like web apps. Say goodbye to the many, long, hard-coded yaml files and embrace an easier way to manage your deployed applications!
+
+
+== Initialize a Helm Chart Repository
+
+You can find a chart with the desired software in the https://artifacthub.io/packages/search?kind=0[Artifact Hub], parameterize its resources through Helm to deploy to Kubernetes and this eventually brings up said software.
+
+Sometimes, your microservice will persist its data into a database and in this section we will use Helm to install a PostgreSQL database instance from a chart repository.
+A chart repository is an HTTP server that houses an `index.yaml` file and optionally some packaged charts.
+
+First check if the Helm repo `https://charts.bitnami.com/bitnami` is already present:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+helm repo list
+----
+
+If the repo is not there, please run the following commands to add it:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+helm repo add bitnami https://charts.bitnami.com/bitnami
+----
+
+NOTE: Make sure we get the latest list of charts by running a periodical update of the repos using 
+`helm repo update`
+
+== Install a Helm Chart
+
+Firstly, create a new Kubernetes namespace:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+kubectl create ns dev
+
+#permanently save the namespace for all subsequent kubectl commands
+kubectl config set-context --current --namespace=dev
+----
+
+Setup the database instance with Helm, using the following command:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+helm install faq-db \
+--set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false \
+bitnami/postgresql
+----
+
+== Validate your installation
+
+When a chart is installed, the Helm library creates a release to track that installation.
+You can validate the installation via:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+helm list <1>
+helm get all faq-db <2>
+----
+
+<1> The `list` command shows the releases that are deployed or failed.
+
+<2>  This command prints a user-friendly collection of information about the
+notes, hooks, supplied values, and generated manifest file of the given release.
+
+IMPORTANT: You can uninstall a release, use the `helm uninstall` command.
+

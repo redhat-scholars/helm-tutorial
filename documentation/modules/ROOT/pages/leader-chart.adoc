@@ -53,7 +53,7 @@ Remove the `templates` folder under leader because in this approach we will not 
 Go to the newly created charts and find the `values.yaml` file.
 You can use `vim` or your favorite IDE to edit its values.
 
-Modify the name of the values file with the image values with:
+Delete everything from your `values.yaml` and just add the following:
 
 [.console-input]
 [source, yaml, subs="attributes+,+macros"]
@@ -86,7 +86,7 @@ Go to `Chart.yaml` and add a new section regarding dependencies.
 # Each time you need a new dependency, add it in this area
 dependencies:
   - name: postgresql
-    version: 8.6.4
+    version: 10.4.5
     repository: "https://charts.bitnami.com/bitnami"
 ----
 
@@ -95,6 +95,7 @@ Save your work and run in the terminal the following command in order to update 
 [.console-input]
 [source,  bash, subs="attributes+,+macros"]
 ----
+cd leader
 helm dependency update
 ----
 
@@ -136,8 +137,9 @@ Go to `leader/charts/faq/values.yaml` and comment the details regarding PostgreS
 ----
 postgresql:
 #  server: faq-db-postgresql
+#  postgresqlUsername: faq-default
 #  secretName: faq-db-postgresql
-  secretKey:  postgresql-password
+  secretKey: postgresql-password
 ----
 
 === Deploy the leader charts
@@ -159,7 +161,7 @@ helm list
 helm get all leader
 ----
 
-Go in a browser window and copy-paste http://localhost:8080/questions
+If you worked locally, please go in a browser window and copy-paste http://localhost:8080/questions
 
 *Congratulations*, you have installed the application with just one command!
 

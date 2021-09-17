@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Basics and Fundamentals</title>
+    <link rel="canonical" href="https://redhat-scholars.github.io/course-template/helm-tutorial/basics.html">
+    <link rel="prev" href="setup.html">
+    <link rel="next" href="create.html">
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/NewRHDFullLogo_4-color_white-wordmark.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-scholars.github.io/course-template"></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="helm-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Requirements</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="setup.html">Setup</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Beginner</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="basics.html">Basics and Fundamentals</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="create.html">Setup your first charts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="chart-per-service.html">Chart per service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="leader-chart.html">Leader Chart approach</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Helm Tutorial</a></li>
+    <li>Beginner</li>
+    <li><a href="basics.html">Basics and Fundamentals</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-scholars/helm-tutorial/edit/master/documentation/modules/ROOT/pages/basics.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Basics and Fundamentals</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Helm is a packager for Kubernetes that bundles related manifest files and packages them into a single logical deployment unit: <code>Chart</code>. Simplified, for many engineers Helm makes it easy to start using Kubernetes with real applications.</p>
+</div>
+<div class="paragraph">
+<p>Helm Charts are useful for addressing the installation complexities and simple upgrades of particularly stateless applications like web apps. Say goodbye to the many, long, hard-coded yaml files and embrace an easier way to manage your deployed applications!</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_initialize_a_helm_chart_repository"><a class="anchor" href="#_initialize_a_helm_chart_repository"></a>Initialize a Helm Chart Repository</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can find a chart with the desired software in the <a href="https://artifacthub.io/packages/search?kind=0">Artifact Hub</a>, parameterize its resources through Helm to deploy to Kubernetes and this eventually brings up said software.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes, your microservice will persist its data into a database and in this section we will use Helm to install a PostgreSQL database instance from a chart repository.
+A chart repository is an HTTP server that houses an <code>index.yaml</code> file and optionally some packaged charts.</p>
+</div>
+<div class="paragraph">
+<p>First check if the Helm repo <code><a href="https://charts.bitnami.com/bitnami" class="bare">https://charts.bitnami.com/bitnami</a></code> is already present:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm repo list</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the repo is not there, please run the following commands to add it:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm repo add bitnami <a href="https://charts.bitnami.com/bitnami" class="bare">https://charts.bitnami.com/bitnami</a></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Make sure we get the latest list of charts by running a periodical update of the repos using
+<code>helm repo update</code>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_install_a_helm_chart"><a class="anchor" href="#_install_a_helm_chart"></a>Install a Helm Chart</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Firstly, create a new Kubernetes namespace:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create ns dev
+
+#permanently save the namespace for all subsequent kubectl commands
+kubectl config set-context --current --namespace=dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Setup the database instance with Helm, using the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install faq-db \
+--set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false \
+bitnami/postgresql</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_validate_your_installation"><a class="anchor" href="#_validate_your_installation"></a>Validate your installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When a chart is installed, the Helm library creates a release to track that installation.
+You can validate the installation via:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm list <i class="conum" data-value="1"></i><b>(1)</b>
+helm get all faq-db <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>list</code> command shows the releases that are deployed or failed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This command prints a user-friendly collection of information about the
+notes, hooks, supplied values, and generated manifest file of the given release.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+You can uninstall a release, use the <code>helm uninstall</code> command.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="setup.html">Setup</a></span>
+  <span class="next"><a href="create.html">Setup your first charts</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

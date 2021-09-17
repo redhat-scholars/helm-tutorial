@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Leader chart</title>
+    <link rel="canonical" href="https://redhat-scholars.github.io/course-template/helm-tutorial/leader-chart.html">
+    <link rel="prev" href="chart-per-service.html">
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/NewRHDFullLogo_4-color_white-wordmark.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-scholars.github.io/course-template"></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="helm-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Requirements</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="setup.html">Setup</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Beginner</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="basics.html">Basics and Fundamentals</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="create.html">Setup your first charts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="chart-per-service.html">Chart per service</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="leader-chart.html">Leader Chart approach</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Helm Tutorial</a></li>
+    <li>Beginner</li>
+    <li><a href="leader-chart.html">Leader Chart approach</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-scholars/helm-tutorial/edit/master/documentation/modules/ROOT/pages/leader-chart.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Leader chart</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Assuming that you already went through the chart per service approach, you should use leader chart approach with Helm charts for many microservices when you want:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>to avoid unnecessary duplication</p>
+</li>
+<li>
+<p>to have consistency accross changes</p>
+</li>
+<li>
+<p>to introduce global changes in an easy manner.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You should be aware that this approach depends on the amount of charts for each lead chart and can introduce:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>high complexity of templates</p>
+</li>
+<li>
+<p>tight coupling</p>
+</li>
+<li>
+<p>less flexible local changes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Goal of this section: deploy the microservice together with its database using Helm charts.
+</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_leader_helm_chart_setup"><a class="anchor" href="#_leader_helm_chart_setup"></a>Leader Helm chart setup</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Make sure that you are under root folder of the clone repository (<em>landmark</em>) and run:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm create leader</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should now have the following structure:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">leader
+├── Chart.yaml
+├── charts
+├── templates
+│   ├── NOTES.txt
+│   ├── _helpers.tpl
+│   ├── deployment.yaml
+│   ├── hpa.yaml
+│   ├── ingress.yaml
+│   ├── service.yaml
+│   ├── serviceaccount.yaml
+│   └── tests
+│       └── test-connection.yaml
+└── values.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Remove the <code>templates</code> folder under leader because in this approach we will not use it.</p>
+</div>
+<div class="sect2">
+<h3 id="_modify_values_yaml_file"><a class="anchor" href="#_modify_values_yaml_file"></a>Modify <code>values.yaml</code> file</h3>
+<div class="paragraph">
+<p>Go to the newly created charts and find the <code>values.yaml</code> file.
+You can use <code>vim</code> or your favorite IDE to edit its values.</p>
+</div>
+<div class="paragraph">
+<p>Delete everything from your <code>values.yaml</code> and just add the following:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Enabling postgres service, by default
+postgresql:
+  # Comment line below if db is deployed inside Kube
+  postgresqlDatabase: faq
+  postgresqlUsername: postgres
+  postgresqlPassword: postgres
+  secretName: leader-postgresql
+  server: leader-postgresql
+  persistence:
+    enabled: false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Save your work.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_modify_chart_yaml"><a class="anchor" href="#_modify_chart_yaml"></a>Modify <code>Chart.yaml</code></h3>
+<div class="paragraph">
+<p>Because we will deploy both charts (faq and database), the <code>Chart.yaml</code> file
+needs to be modified and specify the database dependency there.</p>
+</div>
+<div class="paragraph">
+<p>Go to <code>Chart.yaml</code> and add a new section regarding dependencies.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># These are the dependencies needed by the leader chart.
+# Each time you need a new dependency, add it in this area
+dependencies:
+  - name: postgresql
+    version: 10.4.5
+    repository: "https://charts.bitnami.com/bitnami"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Save your work and run in the terminal the following command in order to update dependencies:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd leader
+helm dependency update</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_assembling_subcharts_in_charts_folder"><a class="anchor" href="#_assembling_subcharts_in_charts_folder"></a>Assembling subcharts in <code>charts</code> folder</h3>
+<div class="paragraph">
+<p>If you went through chart per service setup you will reuse the chart created there.</p>
+</div>
+<div class="paragraph">
+<p>Copy the content of faq chart from to your <code>leader/charts_</code> folder.
+The resulted leader folder should look like this:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">leader
+├── Chart.yaml
+├── charts
+│   └── faq
+│       ├── Chart.yaml
+│       ├── charts
+│       ├── templates
+│       │   ├── NOTES.txt
+│       │   ├── _helpers.tpl
+│       │   ├── configmap.yaml
+│       │   ├── deployment.yaml
+│       │   ├── hpa.yaml
+│       │   ├── ingress.yaml
+│       │   ├── service.yaml
+│       │   ├── serviceaccount.yaml
+│       │   └── tests
+│       │       └── test-connection.yaml
+│       └── values.yaml
+└── values.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Go to <code>leader/charts/faq/values.yaml</code> and comment the details regarding PostgreSQL:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">postgresql:
+#  server: faq-db-postgresql
+#  postgresqlUsername: faq-default
+#  secretName: faq-db-postgresql
+  secretKey: postgresql-password</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deploy_the_leader_charts"><a class="anchor" href="#_deploy_the_leader_charts"></a>Deploy the leader charts</h3>
+<div class="paragraph">
+<p>Install your charts by using:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ helm install leader ./leader
+$ helm status leader</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can validate the installation via:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm list
+helm get all leader</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you worked locally, please go in a browser window and copy-paste <a href="http://localhost:8080/questions" class="bare">http://localhost:8080/questions</a></p>
+</div>
+<div class="paragraph">
+<p><strong>Congratulations</strong>, you have installed the application with just one command!</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="chart-per-service.html">Chart per service</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

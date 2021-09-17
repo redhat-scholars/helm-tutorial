@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Chart per service</title>
+    <link rel="canonical" href="https://redhat-scholars.github.io/course-template/helm-tutorial/chart-per-service.html">
+    <link rel="prev" href="create.html">
+    <link rel="next" href="leader-chart.html">
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/NewRHDFullLogo_4-color_white-wordmark.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-scholars.github.io/course-template"></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="helm-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Requirements</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="setup.html">Setup</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Beginner</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="basics.html">Basics and Fundamentals</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="create.html">Setup your first charts</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="chart-per-service.html">Chart per service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="leader-chart.html">Leader Chart approach</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Helm Tutorial</a></li>
+    <li>Beginner</li>
+    <li><a href="chart-per-service.html">Chart per service</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-scholars/helm-tutorial/edit/master/documentation/modules/ROOT/pages/chart-per-service.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Chart per service</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use a Helm chart per microservice approach if you seek to achieve flexible, simple versioning and low complexity charts to package your application.
+Be careful, this technique might bring:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>huge amount of duplication</p>
+</li>
+<li>
+<p>difficulty to keep consistent many templates</p>
+</li>
+<li>
+<p>hardship to introduce global changes</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Goal of this section: deploy the tutorial microservice using Helm charts in a different namespace.
+</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inject_data_from_a_configmap_template"><a class="anchor" href="#_inject_data_from_a_configmap_template"></a>Inject data from a configmap template</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Navigate to <code>templates</code> folder and create <code>configmap.yaml</code>.
+Open <code>configmap.yaml</code> and replace it with the following:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configmap.region | quote }}
+  labels:
+    {{- include "faq.labels" . | nindent 4 }}
+data:
+  region: {{.Values.configmap.region | upper | quote }} <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Put to upper case the value for region.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Now add the default value for a region in <code>values.yaml</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">configmap:
+  key: region
+  region: cee</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And configure the <code>deployment.yaml</code> template to use the new configmap:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">env:
+  - name: POSTGRES_SERVER
+    value: {{ .Values.postgresql.server | default (printf "%s-postgresql" ( .Release.Name )) | quote }}
+  - name: POSTGRES_USERNAME
+    value: {{ .Values.postgresql.postgresqlUsername | quote }}
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ .Values.postgresql.secretName | default (printf "%s-postgresql" ( .Release.Name )) | quote }}
+        key: {{ .Values.postgresql.secretKey }}
+  - name: REGION
+    valueFrom:
+        configMapKeyRef:
+          name: {{ .Values.configmap.region }}
+          key: {{ .Values.configmap.key }}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_automatically_roll_deployments_when_a_configmapsecret_changes"><a class="anchor" href="#_automatically_roll_deployments_when_a_configmapsecret_changes"></a>Automatically Roll Deployments when a ConfigMap/Secret changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Very often, ConfigMaps or Secrets are injected as configuration files in containers and their content gets updated as well.
+But if the deployment spec itself didn&#8217;t change the application keeps running with the old configuration resulting in an inconsistent deployment.</p>
+</div>
+<div class="paragraph">
+<p>The <code>sha256sum</code> function can be used to ensure a deployment&#8217;s annotation section is updated if another file changes:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">kind: Deployment
+spec:
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But, we can make this change even more elegant because helm has autogenerated for us the inclusion of annotations in <code>Deployment.yaml</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The above states the following: <strong>only</strong> if <code>.Values.podAnnotations</code> is defined, get the yaml definition from there.
+So our change will occur only in <code>values.yaml</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">podAnnotations:
+  checksum/config: '{{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}'</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_upgrade_the_release"><a class="anchor" href="#_upgrade_the_release"></a>Upgrade the release</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Update existing release with the newly added configurations:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm upgrade simple ./chart/faq</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_uninstall_a_release"><a class="anchor" href="#_uninstall_a_release"></a>Uninstall a release</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Simply run the following command to uninstall one of your previous releases:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm uninstall simple</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_replicate_the_installation_in_a_different_namespace"><a class="anchor" href="#_replicate_the_installation_in_a_different_namespace"></a>Replicate the installation in a different namespace</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s create a different namespace:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create ns qa
+
+#permanently save the namespace for all subsequent kubectl commands
+kubectl config set-context --current --namespace=qa</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And define a set of values for this namespace by copy pasting  <code>values.yaml</code> into <code>values.qa.yaml</code>.
+Modify the region inside <code>value.qa.yaml</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">configmap:
+  key: region
+  region: benelux</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And now install the charts:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install simple ./chart/faq --values ./chart/faq/values.qa.yaml</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="create.html">Setup your first charts</a></span>
+  <span class="next"><a href="leader-chart.html">Leader Chart approach</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

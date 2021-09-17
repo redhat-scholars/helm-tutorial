@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Setup your first charts</title>
+    <link rel="canonical" href="https://redhat-scholars.github.io/course-template/helm-tutorial/create.html">
+    <link rel="prev" href="basics.html">
+    <link rel="next" href="chart-per-service.html">
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/NewRHDFullLogo_4-color_white-wordmark.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-scholars.github.io/course-template"></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="helm-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Requirements</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="setup.html">Setup</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Beginner</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="basics.html">Basics and Fundamentals</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="create.html">Setup your first charts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="chart-per-service.html">Chart per service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="leader-chart.html">Leader Chart approach</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Helm Tutorial</a></li>
+    <li>Beginner</li>
+    <li><a href="create.html">Setup your first charts</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-scholars/helm-tutorial/edit/master/documentation/modules/ROOT/pages/create.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Setup your first charts</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you seek to achieve flexible and simple versioning when deploying to Kubernetes, you can create Helm charts for your microservice(s).
+The Helm chart per microservice technique can help you to quickly package your application.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Remember that your charts should contain templates useful for the deployment of your application, so please try to avoid declaring multiple Kubernetes resources in one template.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Goal of this section is to deploy  <a href="https://github.com/redhat-developer-demos/rhd-tutorial-helm.git">the tutorial application</a> using Helm Charts.</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_create_the_chart"><a class="anchor" href="#_create_the_chart"></a>Create the chart</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Firstly, let&#8217;s clone the repository:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone  <a href="https://github.com/redhat-developer-demos/rhd-tutorial-helm.git" class="bare">https://github.com/redhat-developer-demos/rhd-tutorial-helm.git</a></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make sure that you are under root folder of the cloned repository (<code>rhd-tutorial-helm</code>) and run:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd chart
+helm create faq</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The above command generates the following structure for your chart:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">├── Chart.yaml <i class="conum" data-value="1"></i><b>(1)</b>
+├── charts <i class="conum" data-value="2"></i><b>(2)</b>
+├── templates <i class="conum" data-value="3"></i><b>(3)</b>
+│   ├── NOTES.txt <i class="conum" data-value="6"></i><b>(6)</b>
+│   ├── _helpers.tpl <i class="conum" data-value="7"></i><b>(7)</b>
+│   ├── deployment.yaml
+│   ├── hpa.yaml
+│   ├── ingress.yaml
+│   ├── service.yaml
+│   ├── serviceaccount.yaml
+│   └── tests <i class="conum" data-value="5"></i><b>(5)</b>
+│       └── test-connection.yaml
+└── values.yaml <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>Chart</code> file contains a contains a description of the chart.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>charts</code> directory can contain other charts.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>templates/</code> directory contains all template files used for installing a chart.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <code>values.yaml</code> file contains the default values for a chart.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The <code>tests</code> directory can contain tests to be run at different installation stages of the charts.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>The <code>NOTES.txt</code> can contain chart installation instructions that will be displayed to the users when running <code>helm install</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code>_helpers.tpl</code> is where you can put template helpers that you can re-use throughout the chart.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_customizing_values_yaml"><a class="anchor" href="#_customizing_values_yaml"></a>Customizing <code>values.yaml</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your <code>values.yaml</code> is the place where you can specify values for different parameters used across templates.</p>
+</div>
+<div class="paragraph">
+<p>Modify the name of the values file with the image values with:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">image:
+  repository: ammbra/faq
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+  containerPort: 8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Using the details from previous section when you installed the database, you can parameterize the connection to the database:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">postgresql:
+  server: faq-db-postgresql
+  postgresqlUsername: faq-default
+  secretName: faq-db-postgresql
+  secretKey: postgres-password</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Every well-designed application needs health checks and this why you should add the following:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">readinessProbe:
+  path: /q/health/ready
+  initialDelaySeconds: 5
+  timeoutSeconds: 3
+  periodSeconds: 3
+  failureThreshold: 3
+
+
+livenessProbe:
+  path: /q/health/live
+  initialDelaySeconds: 10
+  timeoutSeconds: 2
+  periodSeconds: 8
+  failureThreshold: 3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Your deployed application should be accessible from inside and outside the Kubernetes cluster.
+A Kubernetes Service of type <code>LoadBalancer</code> will be used for this installation.</p>
+</div>
+<div class="paragraph">
+<p>Please change the service values that will expose your microservice:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">service:
+  type: LoadBalancer
+  port: 8080</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_modify_the_template_associated_with_deployment"><a class="anchor" href="#_modify_the_template_associated_with_deployment"></a>Modify the template associated with Deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Navigate to <code>templates/deployment.yaml</code>.
+The keys associated to the values defined in <code>values.yaml</code> need to be employed in corresponding templates by using template directives.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A template directive is enclosed in <code>{{ and }}</code> blocks.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Modify the Docker image section by adding a parametrizable container port:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+imagePullPolicy: {{ .Values.image.pullPolicy }}
+ports:
+  - name: http
+    containerPort: {{ .Values.image.containerPort }}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Since the microservice is also using a PostgreSQL database, let&#8217;s add its details:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">env:
+  - name: POSTGRES_SERVER
+    value: {{ .Values.postgresql.server | default (printf "%s-postgresql" ( .Release.Name )) | quote }} <i class="conum" data-value="1"></i><b>(1)</b>
+  - name: POSTGRES_USERNAME
+    value: {{ .Values.postgresql.postgresqlUsername | default (printf "postgres" ) | quote }}
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ .Values.postgresql.secretName | default (printf "%s-postgresql" ( .Release.Name )) | quote }}
+        key: {{ .Values.postgresql.secretKey }} <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>If the value for the PostgreSQL server is defined in <code>values.yaml</code>, that one will be filled in.
+Else, a string composed from name of the release and ending with <code>postgresql</code> will be filled in.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Quote the username value from <code>values.yaml</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Please note that the database password is not directly obtained from <code>values.yaml</code>, but referenced from the secret that contains the actual password.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Last but not least, the health endpoints need to adapted in order to use the keys defined in <code>values.yaml</code>.
+Change the health and readiness using the following:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">readinessProbe:
+  httpGet:
+    path: {{ .Values.readinessProbe.path}}
+    port: {{ .Values.service.port }}
+  initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds}}
+  timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds}}
+  periodSeconds: {{ .Values.readinessProbe.periodSeconds}}
+  failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+livenessProbe:
+  httpGet:
+    path: {{ .Values.livenessProbe.path}}
+    port: {{ .Values.service.port }}
+  initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds}}
+  timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds}}
+  periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+  failureThreshold: {{ .Values.livenessProbe.failureThreshold}}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deploy_the_modified_charts"><a class="anchor" href="#_deploy_the_modified_charts"></a>Deploy the modified charts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now simply install your charts using:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install simple ./chart/faq</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check the status of your installation and get the details by running:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm status simple <i class="conum" data-value="1"></i><b>(1)</b>
+helm get all simple <i class="conum" data-value="2"></i><b>(2)</b>
+kubectl get svc/simple-faq <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Check if your installation was successful or not.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Get information about resources deployed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Get the URL to access your application.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you deployed locally, go in a browser window and copy-paste <a href="http://localhost:8080/ask" class="bare">http://localhost:8080/ask</a></p>
+</div>
+<div class="paragraph">
+<p><strong>Congratulations</strong>, you can now see the frequently asked questions!</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="basics.html">Basics and Fundamentals</a></span>
+  <span class="next"><a href="chart-per-service.html">Chart per service</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

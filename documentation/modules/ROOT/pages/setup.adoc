@@ -62,10 +62,3 @@ helm version
 :profile: my_profile
 
 include::partial$kubernetes-setup.adoc[]
-
-[#downloadtutorial]
-== Get tutorial sources
-
-:tutorial-url: https://github.com/redhat-developer-demos/rhd-tutorial-helm.git
-:folder: my_folder
-include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-helm/master/download-sources.adoc[]

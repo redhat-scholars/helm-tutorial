@@ -4,5 +4,5 @@
 * Beginner
 ** xref:basics.adoc[Basics and Fundamentals]
 ** xref:create.adoc[Setup your first charts]
-** xref:chart-per-service.adoc[Chart per service]
+** xref:chart-per-service.adoc[Chart per service approach]
 ** xref:leader-chart.adoc[Leader Chart approach]

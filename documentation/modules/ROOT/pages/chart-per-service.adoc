@@ -1,4 +1,4 @@
-= Chart per service
+= Chart per service approach
 
 Use a Helm chart per microservice approach if you seek to achieve flexible, simple versioning and low complexity charts to package your application.
 Be careful, this technique might bring:

@@ -150,15 +150,13 @@ env:
     valueFrom:
       secretKeyRef:
         name: {{ .Values.postgresql.secretName | default (printf "%s-postgresql" ( .Release.Name )) | quote }}
-        key: {{ .Values.postgresql.secretKey }} <3>
+        key: {{ .Values.postgresql.secretKey }} <2>
 ----
 
 <1> If the value for the PostgreSQL server is defined in `values.yaml`, that one will be filled in.
  Else, a string composed from name of the release and ending with `postgresql` will be filled in.
 
-<2> Quote the username value from `values.yaml`.
-
-<3> Please note that the database password is not directly obtained from `values.yaml`, but referenced from the secret that contains the actual password.
+<2> Please note that the database password is not directly obtained from `values.yaml`, but referenced from the secret that contains the actual password.
 
 Last but not least, the health endpoints need to adapted in order to use the keys defined in `values.yaml`.
 Change the health and readiness using the following:

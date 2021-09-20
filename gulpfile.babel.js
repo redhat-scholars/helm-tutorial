@@ -7,7 +7,7 @@ import {load as yamlLoad} from "yaml-js";
 import generator from "@antora/site-generator-default";
 import browserSync from "browser-sync";
 
-const filename = "github-pages.yml";
+const filename = "dev-site.yml";
 const server = browserSync.create();
 const args = ["--playbook", filename];
 

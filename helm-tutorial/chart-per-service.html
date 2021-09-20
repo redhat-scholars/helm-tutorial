@@ -122,7 +122,7 @@ Be careful, this technique might bring:</p>
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Goal of this section: deploy the tutorial microservice using Helm charts in a different namespace.
+<p><strong>Goal of this section: deploy the tutorial microservice using Helm charts in a different namespace/project.
 </strong></p>
 </div>
 </div>
@@ -244,17 +244,26 @@ So our change will occur only in <code>values.yaml</code>:</p>
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm upgrade simple ./chart/faq</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>If you installed the charts locally, you can run the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl 'http://localhost:8080/ask/cee' -H 'accept: application/json'</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_uninstall_a_release"><a class="anchor" href="#_uninstall_a_release"></a>Uninstall a release</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Simply run the following command to uninstall one of your previous releases:</p>
+<p>Simply run the following command to uninstall your previous releases:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm uninstall simple</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm uninstall simple
+helm uninstall faq-db</code></pre>
 </div>
 </div>
 </div>
@@ -265,6 +274,19 @@ So our change will occur only in <code>values.yaml</code>:</p>
 <div class="paragraph">
 <p>Let&#8217;s create a different namespace:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_minikube"></a>Minikube</p>
+</li>
+<li>
+<p><a id="tabset1_openshift"></a>OpenShift</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_minikube">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create ns qa
@@ -273,9 +295,19 @@ So our change will occur only in <code>values.yaml</code>:</p>
 kubectl config set-context --current --namespace=qa</code></pre>
 </div>
 </div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_openshift">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create project qa</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>And define a set of values for this namespace by copy pasting  <code>values.yaml</code> into <code>values.qa.yaml</code>.
-Modify the region inside <code>value.qa.yaml</code>:</p>
+Modify the region inside <code>values.qa.yaml</code>:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -289,8 +321,24 @@ Modify the region inside <code>value.qa.yaml</code>:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install simple ./chart/faq --values ./chart/faq/values.qa.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install faq-db \
+--set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false,securityContext.enabled=false,containerSecurityContext.enabled=false \
+bitnami/postgresql <i class="conum" data-value="1"></i><b>(1)</b>
+
+helm install simple ./chart/faq --values ./chart/faq/values.qa.yaml <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Install the PostgreSQL Helm chart in the new namespace/project.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Install the faq Helm chart in the <code>qa</code> namespace using the values dedicated to this namespace.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>

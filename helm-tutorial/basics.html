@@ -157,8 +157,21 @@ Make sure we get the latest list of charts by running a periodical update of the
 <h2 id="_install_a_helm_chart"><a class="anchor" href="#_install_a_helm_chart"></a>Install a Helm Chart</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Firstly, create a new Kubernetes namespace:</p>
+<p>Firstly, create a new Kubernetes namespace or project:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_minikube"></a>Minikube</p>
+</li>
+<li>
+<p><a id="tabset1_openshift"></a>OpenShift</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_minikube">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create ns dev
@@ -167,9 +180,32 @@ Make sure we get the latest list of charts by running a periodical update of the
 kubectl config set-context --current --namespace=dev</code></pre>
 </div>
 </div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_openshift">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create project dev</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>Setup the database instance with Helm, using the following command:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_minikube"></a>Minikube</p>
+</li>
+<li>
+<p><a id="tabset2_openshift"></a>OpenShift</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_minikube">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install faq-db \
@@ -178,32 +214,86 @@ bitnami/postgresql</code></pre>
 </div>
 </div>
 </div>
+<div class="tab-pane" aria-labelledby="tabset2_openshift">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install faq-db \
+--set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false,securityContext.enabled=false,containerSecurityContext.enabled=false \
+bitnami/postgresql</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For OpenShift, you can define the <code>runAsUser</code> and <code>fsGroup</code> accordingly, based on the security context constraints enabled by administrators.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="sect1">
 <h2 id="_validate_your_installation"><a class="anchor" href="#_validate_your_installation"></a>Validate your installation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>When a chart is installed, the Helm library creates a release to track that installation.
-You can validate the installation via:</p>
+You can validate the installation via the <code>list</code> command to see the releases that are deployed or failed.</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm list <i class="conum" data-value="1"></i><b>(1)</b>
-helm get all faq-db <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm list</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>list</code> command shows the releases that are deployed or failed.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>This command prints a user-friendly collection of information about the
-notes, hooks, supplied values, and generated manifest file of the given release.</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>You should see something similar to:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME  	NAMESPACE     	REVISION	UPDATED                              	STATUS  	CHART             	APP VERSION
+faq-db	dev	1       	2021-09-20 09:30:55.615499 +0200 CEST	deployed	postgresql-10.10.1	11.13.0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you wish to see information about the
+notes, hooks, supplied values, and generated manifest file of the given release, please use the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm get all faq-db</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output will be verbose and similar to:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME: faq-db
+LAST DEPLOYED: Mon Sep 20 09:30:55 2021
+NAMESPACE: anasandbox-dev
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+containerSecurityContext:
+enabled: false
+persistence:
+enabled: false
+postgresqlDatabase: faq
+postgresqlPassword: postgres
+postgresqlUsername: faq-default
+securityContext:
+enabled: false
+
+COMPUTED VALUES:
+.....</code></pre>
+</div>
 </div>
 <div class="admonitionblock important">
 <table>

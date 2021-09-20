@@ -185,6 +185,19 @@ You can use <code>vim</code> or your favorite IDE to edit its values.</p>
 <div class="paragraph">
 <p>Delete everything from your <code>values.yaml</code> and just add the following:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_minikube"></a>Minikube</p>
+</li>
+<li>
+<p><a id="tabset1_openshift"></a>OpenShift</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_minikube">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Enabling postgres service, by default
@@ -197,6 +210,29 @@ postgresql:
   server: leader-postgresql
   persistence:
     enabled: false</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_openshift">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Enabling postgres service, by default
+postgresql:
+  # Comment line below if db is deployed inside Kube
+  postgresqlDatabase: faq
+  postgresqlUsername: postgres
+  postgresqlPassword: postgres
+  secretName: leader-postgresql
+  server: leader-postgresql
+  securityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+  persistence:
+    enabled: false</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -298,7 +334,7 @@ helm get all leader</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you worked locally, please go in a browser window and copy-paste <a href="http://localhost:8080/questions" class="bare">http://localhost:8080/questions</a></p>
+<p>If you worked locally, please go in a browser window and copy-paste <a href="http://localhost:8080/ask" class="bare">http://localhost:8080/ask</a></p>
 </div>
 <div class="paragraph">
 <p><strong>Congratulations</strong>, you have installed the application with just one command!</p>

@@ -311,7 +311,7 @@ ports:
     valueFrom:
       secretKeyRef:
         name: {{ .Values.postgresql.secretName | default (printf "%s-postgresql" ( .Release.Name )) | quote }}
-        key: {{ .Values.postgresql.secretKey }} <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+        key: {{ .Values.postgresql.secretKey }} <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -323,10 +323,6 @@ Else, a string composed from name of the release and ending with <code>postgresq
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Quote the username value from <code>values.yaml</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Please note that the database password is not directly obtained from <code>values.yaml</code>, but referenced from the secret that contains the actual password.</td>
 </tr>
 </table>

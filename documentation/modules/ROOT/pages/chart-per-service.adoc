@@ -7,7 +7,7 @@ Be careful, this technique might bring:
 • difficulty to keep consistent many templates
 • hardship to introduce global changes
 
-**Goal of this section: deploy the tutorial microservice using Helm charts in a different namespace.
+**Goal of this section: deploy the tutorial microservice using Helm charts in a different namespace/project.
 **
 
 == Inject data from a configmap template
@@ -116,20 +116,34 @@ Update existing release with the newly added configurations:
 helm upgrade simple ./chart/faq
 ---- 
 
+If you installed the charts locally, you can run the following command:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+curl 'http://localhost:8080/ask/cee' -H 'accept: application/json'
+----
+
 == Uninstall a release
 
-Simply run the following command to uninstall one of your previous releases:
+Simply run the following command to uninstall your previous releases:
 
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
 helm uninstall simple
+helm uninstall faq-db
 ----
 
 == Replicate the installation in a different namespace
 
 Let's create a different namespace:
 
+[tabs]
+====	
+Minikube::
++
+--
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
@@ -138,9 +152,20 @@ kubectl create ns qa
 #permanently save the namespace for all subsequent kubectl commands
 kubectl config set-context --current --namespace=qa
 ----
+--
+OpenShift::
++
+--
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+oc create project qa
+----
+--
+====
 
 And define a set of values for this namespace by copy pasting  `values.yaml` into `values.qa.yaml`.
-Modify the region inside `value.qa.yaml`:
+Modify the region inside `values.qa.yaml`:
 
 [.console-input]
 [source,yaml,subs="attributes+,+macros"]
@@ -155,5 +180,12 @@ And now install the charts:
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
-helm install simple ./chart/faq --values ./chart/faq/values.qa.yaml
+helm install faq-db \
+--set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false,securityContext.enabled=false,containerSecurityContext.enabled=false \
+bitnami/postgresql <1> 
+
+helm install simple ./chart/faq --values ./chart/faq/values.qa.yaml <2>
 ----
+
+<1> Install the PostgreSQL Helm chart in the new namespace/project.
+<2> Install the faq Helm chart in the `qa` namespace using the values dedicated to this namespace.

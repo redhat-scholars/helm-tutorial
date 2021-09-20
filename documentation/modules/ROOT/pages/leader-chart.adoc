@@ -55,6 +55,11 @@ You can use `vim` or your favorite IDE to edit its values.
 
 Delete everything from your `values.yaml` and just add the following:
 
+[tabs]
+====	
+Minikube::
++
+--
 [.console-input]
 [source, yaml, subs="attributes+,+macros"]
 ----
@@ -69,6 +74,30 @@ postgresql:
   persistence:
     enabled: false
 ----
+--
+OpenShift::
++
+--
+[.console-input]
+[source, yaml, subs="attributes+,+macros"]
+----
+# Enabling postgres service, by default
+postgresql:
+  # Comment line below if db is deployed inside Kube
+  postgresqlDatabase: faq
+  postgresqlUsername: postgres
+  postgresqlPassword: postgres
+  secretName: leader-postgresql
+  server: leader-postgresql
+  securityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+  persistence:
+    enabled: false
+----
+--
+====
 
 Save your work.
 
@@ -161,7 +190,7 @@ helm list
 helm get all leader
 ----
 
-If you worked locally, please go in a browser window and copy-paste http://localhost:8080/questions
+If you worked locally, please go in a browser window and copy-paste http://localhost:8080/ask
 
 *Congratulations*, you have installed the application with just one command!
 

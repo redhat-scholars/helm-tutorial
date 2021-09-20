@@ -35,8 +35,13 @@ NOTE: Make sure we get the latest list of charts by running a periodical update 
 
 == Install a Helm Chart
 
-Firstly, create a new Kubernetes namespace:
+Firstly, create a new Kubernetes namespace or project:
 
+[tabs]
+====	
+Minikube::
++
+--
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
@@ -45,9 +50,26 @@ kubectl create ns dev
 #permanently save the namespace for all subsequent kubectl commands
 kubectl config set-context --current --namespace=dev
 ----
+--
+OpenShift::
++
+--
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+oc create project dev
+----
+--
+====
+
 
 Setup the database instance with Helm, using the following command:
 
+[tabs]
+====	
+Minikube::
++
+--
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
@@ -55,23 +77,75 @@ helm install faq-db \
 --set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false \
 bitnami/postgresql
 ----
+--	
+OpenShift::
++
+--
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+helm install faq-db \
+--set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false,securityContext.enabled=false,containerSecurityContext.enabled=false \
+bitnami/postgresql
+--
+====
+
+TIP: For OpenShift, you can define the `runAsUser` and `fsGroup` accordingly, based on the security context constraints enabled by administrators.
 
 == Validate your installation
 
 When a chart is installed, the Helm library creates a release to track that installation.
-You can validate the installation via:
+You can validate the installation via the `list` command to see the releases that are deployed or failed.
 
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
-helm list <1>
-helm get all faq-db <2>
+helm list 
 ----
 
-<1> The `list` command shows the releases that are deployed or failed.
+You should see something similar to:
 
-<2>  This command prints a user-friendly collection of information about the
-notes, hooks, supplied values, and generated manifest file of the given release.
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+NAME  	NAMESPACE     	REVISION	UPDATED                              	STATUS  	CHART             	APP VERSION
+faq-db	dev	1       	2021-09-20 09:30:55.615499 +0200 CEST	deployed	postgresql-10.10.1	11.13.0  
+----
+
+If you wish to see information about the
+notes, hooks, supplied values, and generated manifest file of the given release, please use the following command:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+helm get all faq-db 
+----
+
+The output will be verbose and similar to:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+NAME: faq-db
+LAST DEPLOYED: Mon Sep 20 09:30:55 2021
+NAMESPACE: anasandbox-dev
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+containerSecurityContext:
+enabled: false
+persistence:
+enabled: false
+postgresqlDatabase: faq
+postgresqlPassword: postgres
+postgresqlUsername: faq-default
+securityContext:
+enabled: false
+
+COMPUTED VALUES:
+.....
+----
 
 IMPORTANT: You can uninstall a release, use the `helm uninstall` command.
 

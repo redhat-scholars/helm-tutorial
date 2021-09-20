@@ -62,3 +62,13 @@ helm version
 :profile: my_profile
 
 include::partial$kubernetes-setup.adoc[]
+
+== Clone the repository
+
+In this tutorial Helm charts will be created to deploy a microservice. Please clone the repository:
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+git clone  https://github.com/redhat-developer-demos/rhd-tutorial-helm.git
+----

@@ -90,6 +90,7 @@ bitnami/postgresql
 --
 ====
 
+TIP: For OpenShift, you can define the `runAsUser` and `fsGroup` accordingly, based on the security context constraints enabled by administrators.
 
 == Validate your installation
 

@@ -121,7 +121,7 @@ If you installed the charts locally, you can run the following command:
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
-curl -X 'GET' 'http://localhost:8080/ask/cee' -H 'accept: application/json'
+curl 'http://localhost:8080/ask/cee' -H 'accept: application/json'
 ----
 
 == Uninstall a release

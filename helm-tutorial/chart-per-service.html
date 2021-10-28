@@ -245,11 +245,12 @@ So our change will occur only in <code>values.yaml</code>:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>If you installed the charts locally, you can run the following command:</p>
+<p>If you installed the charts locally, you can run the following commands:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl 'http://localhost:8080/ask/cee' -H 'accept: application/json'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export APP=$(minikube service simple-faq --url -n dev)
+curl 'http://$APP/ask/cee' -H 'accept: application/json'</code></pre>
 </div>
 </div>
 </div>

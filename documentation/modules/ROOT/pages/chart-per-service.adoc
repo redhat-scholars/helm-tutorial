@@ -116,12 +116,13 @@ Update existing release with the newly added configurations:
 helm upgrade simple ./chart/faq
 ---- 
 
-If you installed the charts locally, you can run the following command:
+If you installed the charts locally, you can run the following commands:
 
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
-curl 'http://localhost:8080/ask/cee' -H 'accept: application/json'
+export APP=$(minikube service simple-faq --url -n dev)
+curl 'http://$APP/ask/cee' -H 'accept: application/json'
 ----
 
 == Uninstall a release

@@ -217,8 +217,8 @@ bitnami/postgresql</code></pre>
 <div class="tab-pane" aria-labelledby="tabset2_openshift">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install faq-db \
---set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false,securityContext.enabled=false,containerSecurityContext.enabled=false \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">helm install faq-db --set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false,\
+securityContext.enabled=false,containerSecurityContext.enabled=false \
 bitnami/postgresql</code></pre>
 </div>
 </div>

@@ -17,7 +17,7 @@ You should be aware that this approach depends on the amount of charts for each 
 
 == Leader Helm chart setup
 
-Make sure that you are under root folder of the clone repository (_landmark_) and run:
+Make sure that you are under root folder of the clone repository and run:
 
 [.console-input]
 [source, bash, subs="attributes+,+macros"]

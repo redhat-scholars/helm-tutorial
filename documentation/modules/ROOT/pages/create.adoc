@@ -198,7 +198,5 @@ kubectl get svc/simple-faq <3>
 <2> Get information about resources deployed.
 <3> Get the URL to access your application.
 
-If you deployed locally, go in a browser window and copy-paste http://localhost:8080/ask
-
 *Congratulations*, you can now see the frequently asked questions!
 

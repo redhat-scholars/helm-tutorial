@@ -84,8 +84,8 @@ OpenShift::
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
-helm install faq-db \
---set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false,securityContext.enabled=false,containerSecurityContext.enabled=false \
+helm install faq-db --set postgresqlUsername=faq-default,postgresqlPassword=postgres,postgresqlDatabase=faq,persistence.enabled=false,\
+securityContext.enabled=false,containerSecurityContext.enabled=false \
 bitnami/postgresql
 --
 ====

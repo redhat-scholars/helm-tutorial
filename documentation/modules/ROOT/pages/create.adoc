@@ -56,7 +56,7 @@ Modify the name of the values file with the image values with:
 [source, yaml,subs="attributes+,+macros"]
 ----
 image:
-  repository: ammbra/faq
+  repository: quay.io/anasandbox/faq
   tag: "1.0.0"
   pullPolicy: IfNotPresent
   containerPort: 8080
@@ -71,7 +71,7 @@ postgresql:
   server: faq-db-postgresql
   postgresqlUsername: faq-default
   secretName: faq-db-postgresql
-  secretKey: postgres-password
+  secretKey: postgresql-password
 ----
 
 Every well-designed application needs health checks and this why you should add the following:

@@ -7,12 +7,16 @@ Be careful, this technique might bring:
 • difficulty to keep consistent many templates
 • hardship to introduce global changes
 
-**Goal of this section: deploy the tutorial microservice using Helm charts in a different namespace/project.
+**Goal of this section: customize the configuration of the tutorial microservice with another template and deploy it using Helm charts in a different namespace/project.
 **
 
-== Inject data from a configmap template
+== Inject configurations from a configmap template
 
-Navigate to `templates` folder and create `configmap.yaml`.
+When working with a microservice is likely that you will inject and manage configurations using other Kubernetes resources, like 
+ConfigMap or Secret. 
+
+Let's inject a configuration from a ConfigMap for the tutorial microservice.
+Will start by navigating to `templates` folder and create `configmap.yaml`.
 Open `configmap.yaml` and replace it with the following:
 
 [.console-input]
@@ -122,7 +126,7 @@ If you installed the charts locally, you can run the following commands:
 [source,bash,subs="attributes+,+macros"]
 ----
 export APP=$(minikube service simple-faq --url -n dev)
-curl 'http://$APP/ask/cee' -H 'accept: application/json'
+curl '$APP/ask/CEE' -H 'accept: application/json'
 ----
 
 == Uninstall a release

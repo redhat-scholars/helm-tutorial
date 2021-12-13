@@ -56,6 +56,11 @@ You can validate your installation by running:
 helm version
 ----
 
+[NOTE]
+====
+This tutorial was successfully tested using a `Helm` version greater than 3.7.0.
+====
+
 [#minikube]
 == Setup Kubernetes
 

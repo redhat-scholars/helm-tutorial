@@ -196,7 +196,7 @@ If you worked locally, please run the following commands:
 [source,bash,subs="attributes+,+macros"]
 ----
 export APP=$(minikube service leader-faq --url -n dev)
-curl 'http://$APP/ask/cee' -H 'accept: application/json'
+curl '$APP/ask/CEE' -H 'accept: application/json'
 ----
 
 *Congratulations*, you have installed the application with just one command!

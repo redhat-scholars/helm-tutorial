@@ -228,12 +228,26 @@ spec:
 </div>
 <div class="paragraph">
 <p>The above states the following: <strong>only</strong> if <code>.Values.podAnnotations</code> is defined, get the yaml definition from there.
-So our change will occur only in <code>values.yaml</code>:</p>
+So our change should occur in <code>values.yaml</code>:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">podAnnotations:
   checksum/config: '{{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As the above value contains both YAML and a Go template, we need to parse the yaml (<code>toYaml</code>)
+and use the template (<code>tpl</code>) in <code>deployment.yaml</code> with:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+      {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}</code></pre>
 </div>
 </div>
 </div>

@@ -73,7 +73,7 @@ Minikube::
 [.console-input]
 [source,bash,subs="attributes+,+macros"]
 ----
-helm install faq-db --set global.postgresql.auth.username=faq-default,global.postgresql.auth.password=postgres,global.postgresql.auth.database=faq,primary.persistence.enabled=false,\
+helm install faq-db --set global.postgresql.auth.username=faq-default,global.postgresql.auth.password=postgres,global.postgresql.auth.database=faq,primary.persistence.enabled=false \
 --version 12.1.2  bitnami/postgresql
 ----
 --	
